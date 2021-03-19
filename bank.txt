@@ -1,0 +1,306 @@
+package demoin;
+
+import java.sql.*;
+import java.util.*;
+
+class Inval extends Exception{  
+	 Inval(String s){  
+	  super(s);  
+	 }  
+	}  
+class atm{
+	public static void main(String[] args) throws ClassNotFoundException
+	{
+		
+		Connection conn=null;
+	    String Resultset;
+		int en;
+		int depo=0;
+		String lmain="0";
+		int change=0;
+		String uname=" ";
+		String pass=" ";
+		String bal=" ";
+        Scanner sc=new Scanner(System.in);
+
+		
+		try {
+			
+			System.out.println("connection started");
+			Class.forName("com.ibm.db2.jcc.DB2Driver");
+			System.out.println("Driver loading");
+			System.out.println(" connections OK ");
+			 conn=DriverManager.getConnection("jdbc:db2://172.17.0.142:50001/itgdb","ITGUSR11","miracle11");
+			System.out.println(" connection estabished ");
+//			Statement st =conn.createStatement();
+//			int s= st.executeUpdate("create table Bank(id varchar(20),name varchar(20),password varchar(20),balance varchar(20))");
+//			 System.out.println("table created succefully");
+		} catch(ClassNotFoundException ex){System.out.println("Driver Not Loaded");
+                }
+		catch(SQLException ex){
+			 System.out.println("SQL Error:"+ex);
+		 }
+		
+
+//			Statement st =conn.createStatement();
+		
+		try
+		{
+ 	    
+
+			System.out.println("enter username and password to login");
+		     String name=sc.next();
+		     String  pwd=sc.next();
+               String res =" select name,password,balance from Bank where name=? and password=?";
+  	          PreparedStatement ptr=conn.prepareStatement(res);
+               ptr.setString(1,name);
+               ptr.setString(2, pwd);
+		     ResultSet rs=ptr.executeQuery();
+			  
+		  while(rs.next())
+			  {
+			 
+				 uname = rs.getString("name");
+			      pass = rs.getString("password");
+			      bal=rs.getString("balance");
+			  }
+		   change=Integer.parseInt(bal);  
+		  if(uname.equals(name) && pwd.equals(pwd))
+		  {
+//			  throw new Inval("enter valid username and password");
+			     System.out.println("enter ur operation \n"
+				+"1.Enter user details\n "
+				+"2.Deposit Amount into account\n"
+				+"3.view bank balance\n"
+				+"4.withdraw balance from account\n"
+				+"5.Exit");
+		en=sc.nextInt();
+		       
+         switch(en) {
+	        
+        	 case 1:
+        		 try {
+        			 
+			PreparedStatement iptr=conn.prepareStatement("insert into Bank values(?,?,?,?)");
+           
+              do {
+            	int k,id=1;
+            	System.out.println("enter name of the user");
+            	String  iname=sc.next();
+            	System.out.println("enter password for the user");
+            	String pw=sc.next();
+            	System.out.println("enter balanace of the user");
+            	int b=sc.nextInt();
+            	k=id;
+            	id++;
+            	ptr.setInt(1, k);
+            	
+            	ptr.setString(2, name);
+            	ptr.setString(3, pw);
+            	ptr.setInt(4, b);
+            	
+            	int i=ptr.executeUpdate();
+            	
+            	System.out.println(i+" record inserted");  
+            	System.out.println("Do you want to continue: "
+            			+ "yes-->1\nno-->2");  
+            	int s=sc.nextInt();  // user value
+            	if(s==2){  
+            	  System.out.println(" connection closed");
+            		break;
+            	}
+            	
+            }while(true);
+			
+			conn.close();
+			System.out.println("Thanks for visiting  the  Bank");
+			
+			break;
+        		 }catch(SQLException ex)
+        		 {
+        			 System.out.println("SQL Error:"+ex);
+        		 }
+        		 
+        	 case 2:
+        		 try {
+        				
+        		 System.out.println("enter how much amount u want to deposit");
+        		 int k=sc.nextInt();
+        		 depo=change+k;
+        		 String s=Integer.toString(depo); 
+        		 System.out.println("current balance is"+depo);
+        		 String vres =" update Bank set balance=? where name=? and  password=? ";
+                PreparedStatement vptr=conn.prepareStatement(vres);
+               	
+                  vptr.setString(1,s);
+                  vptr.setString(2,name);
+	             vptr.setString(3, pwd);
+					
+		     int vrs=vptr.executeUpdate();
+		     conn.close();
+           if(vrs>0)
+           {
+        	   System.out.println("balance deposited in account");
+           }else {
+        	   System.out.println("value not updated");
+           }
+			 				
+		
+			 
+        		 
+        		 break;
+        		 }catch(SQLException e)
+        		 {
+        			 System.out.println(e);
+        		 }
+//        		 try {
+//        			 System.out.println("enter withdraw amount");
+//        			 int with=sc.nextInt();
+//        			 System.out.println("enter username and password to login");
+//						   String dname=sc.next();
+//						   String dpwd=sc.next();
+//		                 String dres =" select balance from Bank where name=? and password=?";
+//		          	PreparedStatement dptr=conn.prepareStatement(res);
+//		         ptr.setString(1,name);
+//		         ptr.setString(2, pwd);
+//						//Statement str =conn.createStatement();
+//					    ResultSet drs=ptr.executeQuery();
+//                    
+//					 rs.next();
+//					  
+//					// System.out.println(rs.getString())
+//					 String amount = rs.getString("balance");
+//			     System.out.println(amount);	
+//			     lmain=amount;
+//				 
+//						
+//						rs.close();
+//        		
+//        		 }catch(SQLException ex)
+//        		 {
+//        			 System.out.println("SQL Error:"+ex);
+//        		 }
+        		 
+       		 
+//      	 										case 3:
+//       	 															try {
+//        	 							for view balance full code								
+//        	 															System.out.println("enter username and password to login");
+//      	 															   String vname=sc.next();
+//      	 															   String vpwd=sc.next();
+//      	 											                 String vres =" select balance from Bank where name=? and password=?";
+//      	 											          	PreparedStatement vptr=conn.prepareStatement(res);
+//      	 											         ptr.setString(1,name);
+//      	 											         ptr.setString(2, pwd);
+//      	 															//Statement str =conn.createStatement();
+//       	 														    ResultSet vrs=ptr.executeQuery();
+//      		                                                        
+//       	 														 rs.next();
+//      	 														  
+//      	 														// System.out.println(rs.getString())
+//      	 														 String amount = rs.getString("balance");
+//        	 												     System.out.println(amount);	
+//        	 												     lmain=amount;
+//        	 													 
+//       	 															
+//      	 															rs.close();
+//       	 															break;
+//      		 
+//       	 															}catch(SQLException ex)
+//       	 														 case 3:
+//        		 System.out.println("your balance is"+change);
+//			break;	{
+//        	 																System.out.println("SQL Error:"+ex);
+//        	 															}
+       		      
+      		         		 
+        	 case 3:
+        		 try {
+        		 Statement st =conn.createStatement();
+        		 String sql = "SELECT balance  FROM Bank ";
+                 ResultSet my = st.executeQuery(sql);
+   		      	 my.next();
+   		      	String ne=my.getString("balance");
+   		      	System.out.println("ur balance is:"+ne);
+   		      	rs.close();
+   		     break;
+        		 }catch(SQLException ex)
+        		 {
+        			 System.out.println(ex);
+        		 }
+			
+          
+		  
+         
+		
+	
+		
+		case 4:
+			try {
+				System.out.println("enter amount to withdraw from the mainbalance");
+				int intake= sc.nextInt();
+				if(intake<change)
+					{
+						change=change-intake;
+						System.out.println("current balance is:"+change);
+						 String s=Integer.toString(change);
+						 String kk="update Bank set balance=? where name=? and password=?";
+						 PreparedStatement  p=conn.prepareStatement(kk);
+						 p.setString(1, s);
+						 p.setString(2, name);
+						 p.setString(3, pwd);
+						 int num=p.executeUpdate();
+						 conn.close();
+						 if(num>0)
+							 {
+								 System.out.println("balance is withdrew from account");
+							 }else {
+								 System.out.println("balance not updated");
+							 }
+					}else {
+						System.out.println("Withdraw amount is greater than ur current balance");
+					}
+				break;
+			}catch(SQLException e)
+			{
+				System.out.println(e);
+				
+			}
+			
+		case 5:
+			System.out.println("Do u want to exir the transcation ");
+			System.out.println("enter 1 to continue or enter 0 to exit");
+			int ex=sc.nextInt();
+			if(ex==0)
+				{
+					System.out.println(" Thanks for the transcation visit again");
+					System.exit(0);
+				}else
+					{
+						System.out.println("2.deposit amount "+"3.view balance"+"4.withdraw money");
+						int noww=sc.nextInt();
+						en=noww;
+					}
+			
+			break;
+			
+		default:
+			System.out.println("enter vaild value");
+         }
+		  }
+			else
+				{
+					System.out.println("enter vaild username and password");
+				}
+				}catch(SQLException e)
+				{
+					System.out.println(e);
+				}
+			
+	
+         }
+	
+}
+
+	
+
