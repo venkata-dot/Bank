@@ -11,6 +11,7 @@ class Inval extends Exception{
 class atm{
 	public static void main(String[] args) throws ClassNotFoundException
 	{
+	System.out.println("welcome to the Atm");
 		
 		Connection conn=null;
 	    String Resultset;
