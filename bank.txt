@@ -12,6 +12,7 @@ class atm{
 	public static void main(String[] args) throws ClassNotFoundException
 	{
 	System.out.println("welcome to the Atm");
+	System.out.println("hai");
 		
 		Connection conn=null;
 	    String Resultset;
